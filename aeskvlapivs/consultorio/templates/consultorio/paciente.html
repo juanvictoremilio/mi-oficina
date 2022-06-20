@@ -1,0 +1,34 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block title %}{{paciente.name}}{% endblock %}
+{% block content %}
+<main role="main">
+  <div class="container">
+    <div class="row mt-3">
+      <div class="col-md-9 mx-auto">
+        <h2 class="section-heading mb-4">Resumen Clínico</h2>
+        <h4 class="section-heading mb-4">{{paciente.name}}</h4>
+        <div>
+          <p>Edad: {{paciente.age}}</p>
+           ANTECEDENTES INMEDIATOS: <p>{{paciente.immediate_background|linebreaks|safe}} </p>
+           OTROS ANTECEDENTES: <p>{{paciente.otras_enf|linebreaks}}</p>
+           EXPLORACION FISICA: <p>{{paciente.actual_situation |linebreaks}}</p>
+           SIGNOS VITALES: <p>FC {{paciente.fc}}, TA {{paciente.tension_sistolica}}/{{paciente.tension_diastolica}}, 
+            PAM: {{paciente.pam}}, FR: {{paciente.fr}}, Temp: {{paciente.temp}}, Sa02: {{paciente.saturation}}, 
+            Dextrostix: {{paciente.dextrostix}}, A1c: {{paciente.a1c}}, Peso: {{paciente.peso}}, Estatura: {{paciente.estatura}}, 
+            IMC: {{paciente.imc}}, Clasificación Masa Corporal: {{paciente.climc}}, ASC: {{paciente.asc}}, 
+            Per. Abdominal: {{paciente.per_abdominal}} cms. </p>
+           OBSERVACIONES: <p>{{paciente.obs | linebreaks}}</p>
+           DXS: <p>{{paciente.diagnosis | linebreaks}}</p>
+           MANEJO: <p>{{paciente.txs | linebreaks}}</p>
+           
+          {% if request.user.is_staff %}
+          
+            <p><a href="#">Editar</a></p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock %}

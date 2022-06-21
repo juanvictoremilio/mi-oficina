@@ -1,5 +1,6 @@
 
 from ast import Continue, If, Return
+from datetime import date
 from binascii import a2b_base64
 from django.db import models
 from math import sqrt
@@ -36,8 +37,8 @@ class Paciente(models.Model):
 
     name = models.CharField(max_length=100, verbose_name='Nombre')
     gender = models.CharField(max_length=4, choices=GENERO, verbose_name='Género')
-    dob = models.DateField(blank=True, null=True, verbose_name='Fecha de Nacimiento')
-    age = models.SmallIntegerField(verbose_name='Edad')
+    dob = models.DateField(verbose_name='Fecha de Nacimiento')
+    age = models.IntegerField(verbose_name='Edad', default=0)
     nationality = models.CharField(max_length=50, blank=True, null=True, verbose_name='Nacionalidad')
     etnia = models.CharField(max_length=50, blank=True, null=True, verbose_name='Etnia')
     scholarship = models.CharField(max_length=50, blank=True, null=True, verbose_name='Escolaridad')
@@ -199,6 +200,12 @@ class Paciente(models.Model):
             POS = 'ESPECIFIQUE DATOS DEL CANCER'
             return POS
 
+    @property
+    def calculateAge(self): 
+        today = date.today() 
+        age = today.year - self.dob.year - ((today.month, today.day) < 
+            (self.dob.month, self.dob.day))  
+        return age 
 
     @property
     def presion_media(self):
@@ -243,6 +250,7 @@ class Paciente(models.Model):
 
 
     def save(self):
+        self.age = self.calculateAge
         self.imc = self.masa_corporal
         self.climc = self.imc_clasif
         self.asc = self.area_sup_corp
@@ -300,7 +308,7 @@ class Reevaluacion(models.Model):
     peso = models.FloatField(blank=True, null=True, default=0) 
     estatura = models.FloatField(blank=True, null=True, default=1)
     imc = models.DecimalField(max_digits=5, decimal_places=2, default=0, verbose_name='IMC')
-    climc = models.CharField(max_length=100, blank=True, null=True, verbose_name='Calsificación Masa Corporal')
+    climc = models.CharField(max_length=100, blank=True, null=True, verbose_name='Clasificación Masa Corporal')
     asc = models.DecimalField(max_digits=5, decimal_places=2, default=0, verbose_name='ASC')
     per_abdominal = models.IntegerField(blank=True, null=True, verbose_name='Per. Abd en cms')
     expl = models.TextField(verbose_name='Complemente Exploración', blank=True, null=True)
@@ -326,7 +334,7 @@ class Reevaluacion(models.Model):
     update = models.DateTimeField(auto_now=True, verbose_name='Fecha de Actualización')
     reevaluación = models.DateTimeField(blank=True, null=True, verbose_name='prox. reevaluación')
 
-
+    
     @property
     def presion_media(self):
         return (self.tension_sistolica + (2 * self.tension_diastolica))/3 
@@ -349,13 +357,13 @@ class Reevaluacion(models.Model):
         elif self.imc > 27 and self.imc < 29.99:
             return 'Sobrepeso Grado II'
 
-        elif self.imc >30 and self.imc < 34.9:
+        elif self.imc >30 and self.imc < 34.99:
             return 'Obesidad Tipo I'
 
-        elif self.imc >35 and self.imc < 39.9:
+        elif self.imc >35 and self.imc < 39.99:
             return 'Obesidad Tipo II'
 
-        elif self.imc >40 and self.imc < 49.9:
+        elif self.imc >40 and self.imc < 49.99:
             return 'Obesidad Tipo III-Mórbida'
 
         elif self.imc >50:
@@ -370,6 +378,7 @@ class Reevaluacion(models.Model):
 
 
     def save(self):
+        self.age = self.edad
         self.imc = self.masa_corporal
         self.climc = self.imc_clasif
         self.asc = self.area_sup_corp

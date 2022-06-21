@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='paciente',
             name='dob',
-            field=models.DateField(blank=True, null=True, verbose_name='Fecha de Nacimiento'),
+            field=models.DateField(verbose_name='Fecha de Nacimiento'),
         ),
         migrations.AddField(
             model_name='reevaluacion',

@@ -1,7 +1,7 @@
 
 from ast import Continue, If, Return
 from datetime import date
-from binascii import a2b_base64
+from typing import Type
 from django.db import models
 from math import sqrt
 
@@ -37,7 +37,7 @@ class Paciente(models.Model):
 
     name = models.CharField(max_length=100, verbose_name='Nombre')
     gender = models.CharField(max_length=4, choices=GENERO, verbose_name='Género')
-    dob = models.DateField(verbose_name='Fecha de Nacimiento')
+    dob = models.DateField(verbose_name='Fecha de Nacimiento', blank=True, null=True)
     age = models.IntegerField(verbose_name='Edad', default=0)
     nationality = models.CharField(max_length=50, blank=True, null=True, verbose_name='Nacionalidad')
     etnia = models.CharField(max_length=50, blank=True, null=True, verbose_name='Etnia')
@@ -55,7 +55,7 @@ class Paciente(models.Model):
     
     # Padeciemiento Actual
 
-    immediate_background = models.TextField(verbose_name="Padecimiento o Situación Actual")
+    immediate_background = models.TextField(verbose_name="Padecimiento, Razón de Abordaje o Situación Actual")
 
     #ANTECEDENTES
 
@@ -279,10 +279,10 @@ class Reevaluacion(models.Model):
     DERECHOHABIENCIA = [(IMSS, 'IMSS'), (ISSSTE, 'ISSSTE'), (SecMarina, 'Secretaría de Marina'),
     (SEDENA, 'SEDENA'), (PEMEX, 'PEMEX'), (OTRO, 'Otro')]
 
-    paciente = models.ForeignKey('Paciente', on_delete=models.CASCADE)
+    paciente = models.ForeignKey(Paciente, on_delete=models.CASCADE)
 
-    age = models.SmallIntegerField(verbose_name='Edad')
-    
+    age = models.SmallIntegerField(default=0, verbose_name='Edad')
+
 
     entitlement = models.CharField(max_length=50, choices=DERECHOHABIENCIA, blank=True, null=True, verbose_name='Derechohabiencia')
 
@@ -378,7 +378,6 @@ class Reevaluacion(models.Model):
 
 
     def save(self):
-        self.age = self.edad
         self.imc = self.masa_corporal
         self.climc = self.imc_clasif
         self.asc = self.area_sup_corp

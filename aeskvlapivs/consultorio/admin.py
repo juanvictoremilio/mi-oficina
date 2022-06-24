@@ -1,4 +1,6 @@
+
 from tkinter import Text
+from unicodedata import name
 from django.contrib import admin
 from django.forms import TextInput
 from .models import Paciente, Reevaluacion

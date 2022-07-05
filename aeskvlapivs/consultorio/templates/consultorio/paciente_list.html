@@ -3,6 +3,8 @@
 {% block title %}Páginas{% endblock %}
 {% block content %}
 {% include 'consultorio/includes/top_menu.html' %}
+
+
 <main role="main">
   <div class="container mb-4">
     {% for paciente in paciente_list %}
@@ -11,8 +13,20 @@
           <h2 class="mb-4">{{paciente.name}}</h2>
           <div>
             <p>{{paciente.immediate_background|striptags|safe|truncatechars:"200"}}</p>
-            <p><a href="{% url 'paciente' paciente.id paciente.name|slugify %}">Resumen Clínico</a>
-              | <a href="{% url 'paciente' paciente.id paciente.name|slugify %}">Historia Clínica</a>
+            {% if request.user.is_staff %}
+            <p><a href="{% url 'consultorio:paciente' paciente.id paciente.name|slugify %}">Resumen Clínico</a>
+              | <a href="{% url 'consultorio:Actualizar Paciente' paciente.id %}">Editar</a>
+              | <a href="{% url 'consultorio:eliminar paciente' paciente.id %}">Eliminar</a>
+              
+              
+                
+              <!--  | <a href="#">Borrar</a>
+              -->
+              {% endif %}
+              
+              
+              
+            
               <!--
               {% if request.user.is_staff %}
                 | <a href="#">Editar</a>

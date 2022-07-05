@@ -4,6 +4,8 @@ from datetime import date
 from typing import Type
 from django.db import models
 from math import sqrt
+from ckeditor.fields import RichTextField
+
 
 # Create your models here.
 
@@ -38,8 +40,8 @@ class Paciente(models.Model):
     name = models.CharField(max_length=100, verbose_name='Nombre')
     gender = models.CharField(max_length=4, choices=GENERO, verbose_name='Género')
     dob = models.DateField(verbose_name='Fecha de Nacimiento', blank=True, null=True)
-    age = models.IntegerField(verbose_name='Edad', default=0)
-    nationality = models.CharField(max_length=50, blank=True, null=True, verbose_name='Nacionalidad')
+    age = models.IntegerField(verbose_name='Edad', default=0, )
+    nationality = models.CharField(max_length=100, blank=True, null=True, verbose_name='Nacionalidad y Lugar de Nacimiento')
     etnia = models.CharField(max_length=50, blank=True, null=True, verbose_name='Etnia')
     scholarship = models.CharField(max_length=50, blank=True, null=True, verbose_name='Escolaridad')
     job = models.CharField(max_length=100, blank=True, null=True, verbose_name='Empleo')
@@ -55,7 +57,7 @@ class Paciente(models.Model):
     
     # Padeciemiento Actual
 
-    immediate_background = models.TextField(verbose_name="Padecimiento, Razón de Abordaje o Situación Actual")
+    immediate_background = RichTextField(verbose_name="Padecimiento, Razón de Abordaje o Situación Actual")
 
     #ANTECEDENTES
 

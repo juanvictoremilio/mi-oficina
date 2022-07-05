@@ -26,6 +26,11 @@ class ReevaluacionAdmin(admin.ModelAdmin):
 	list_filter = ['timestamp', 'entitlement']
 	raw_id_fields = ('paciente',)
 	search_fields = ('paciente__name', 'phone', 'email')
+
+class Media:
+        css = {
+            'all': ('consultorio/css/custom_ckeditor.css',)
+		}
 	
 
 

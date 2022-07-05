@@ -16,12 +16,15 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
+from consultorio.urls import consultorio_patterns
+
+
 
 
 
 urlpatterns = [
     path('', include('core.urls')),
-    path('pacientes/', include('consultorio.urls')),
+    path('pacientes/', include(consultorio_patterns)),
     path('admin/', admin.site.urls),
     
 ]

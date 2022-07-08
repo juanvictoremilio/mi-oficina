@@ -1,6 +1,9 @@
+from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
+from . import models
 from django.db.models import Q
 from .models import Paciente
+from django.views.generic.base import TemplateView
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
@@ -8,7 +11,6 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.utils.decorators import method_decorator
 from .models import Paciente
 from .forms import PacienteForm
-from core.views import HomePageView
 
 class StaffRequiredMixin(object):
     """
@@ -18,9 +20,42 @@ class StaffRequiredMixin(object):
     def dispatch(self, request, *args, **kwargs):
         return super(StaffRequiredMixin, self).dispatch(request, *args, **kwargs)
 
+def uploadFile(request):
+    if request.method == "POST":
+        # Fetching the form data
+        fileTitle = request.POST["fileTitle"]
+        uploadedFile = request.FILES["Imagenología1", 'Imagnología2', 'Imagenología3','Labs1', 
+        'Labs2', 'Labs3']
+
+        # Saving the information in the database
+        document = models.Paciente(
+            title = fileTitle,
+            uploadedFile = uploadedFile
+        )
+        document.save()
+
+    documents = models.Paciente.objects.all()
+
+    return render(request, "consultorio/paciente_list.html", context = {
+        "paciente": documents
+    })
+
+
+class SearchResultsView(ListView):
+    model = Paciente
+    template_name = 'search_results.html'
+
+    def get_queryset(self):  # new
+        query = self.request.GET.get("q")
+        object_list = Paciente.objects.filter(
+            Q(name__icontains=query) | Q(phone__icontains=query)
+        )
+        return object_list
+
 class PacienteListView(ListView):
     model = Paciente
     template_name = 'paciente_list.html'
+    
     
 
 class PacienteDetailView(DetailView):
@@ -32,11 +67,13 @@ class PacienteCreate(CreateView):
     form_class = PacienteForm
     success_url = reverse_lazy('consultorio:pacientes')
 
+
 @method_decorator(staff_member_required, name='dispatch')
 class PacienteUpdate(UpdateView):
     model = Paciente
     form_class = PacienteForm
     template_name_suffix = '_update_form'
+
     
     def get_success_url(self):
         return reverse_lazy('consultorio:Actualizar Paciente', args=[self.object.id]) + '?ok'
@@ -45,6 +82,8 @@ class PacienteUpdate(UpdateView):
 class PacienteDeleteView(DeleteView):
     model = Paciente
     success_url = reverse_lazy('consultorio:pacientes')
+
+
 
 
 

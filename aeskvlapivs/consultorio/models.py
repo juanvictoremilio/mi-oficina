@@ -1,13 +1,17 @@
 
 from ast import Continue, If, Return
+import os
 from datetime import date
 from typing import Type
+from django.core.files.storage import FileSystemStorage
 from django.db import models
 from math import sqrt
-from ckeditor.fields import RichTextField
 
+fs = FileSystemStorage(location='/media/')
 
 # Create your models here.
+def generate_path(instance, filename):
+    return os.path.join("upload", "id_" + str(instance.idupload), filename)
 
 class Paciente(models.Model):
     FEMENINO= 'FEM'
@@ -57,7 +61,7 @@ class Paciente(models.Model):
     
     # Padeciemiento Actual
 
-    immediate_background = RichTextField(verbose_name="Padecimiento, Razón de Abordaje o Situación Actual")
+    immediate_background = models.TextField(verbose_name="Padecimiento, Razón de Abordaje o Situación Actual")
 
     #ANTECEDENTES
 
@@ -84,8 +88,8 @@ class Paciente(models.Model):
     # Situación actual y Exploración
 
     actual_situation = models.TextField(verbose_name="Situación Actual y Exploración")
-    tension_sistolica = models.IntegerField(blank=True, null=True, default=1)
-    tension_diastolica = models.PositiveSmallIntegerField(blank=True, null=True, default=1)
+    tension_sistolica = models.IntegerField(blank=True, null=True, default=0)
+    tension_diastolica = models.PositiveSmallIntegerField(blank=True, null=True, default=0)
     pam = models.IntegerField(default=0, verbose_name='PAM', help_text='No esciriba aquí: Guarde para ver Resultados')
     fc = models.IntegerField(blank=True, null=True, verbose_name='FC')
     fr= models.IntegerField(blank=True, null=True, verbose_name='FR')
@@ -102,13 +106,13 @@ class Paciente(models.Model):
 
     # Paraclínicos
 
-    Imagenología1 = models.FileField(upload_to='Paciente',help_text='formato jpg, jpge', blank=True, null=True )
-    Imagenología2 = models.FileField(upload_to='Paciente', help_text='formato jpg, jpge',blank=True, null=True)
-    Imagenología3 = models.FileField(upload_to='Paciente',help_text='formato jpg, jpge',blank=True, null=True)
+    Imagenología1 = models.FileField(upload_to='Paciente/',help_text='formato jpg, jpge', blank=True, null=True )
+    Imagenología2 = models.FileField(upload_to='Paciente/', help_text='formato jpg, jpge',blank=True, null=True)
+    Imagenología3 = models.FileField(upload_to='Paciente/',help_text='formato jpg, jpge',blank=True, null=True)
 
-    Labs1 = models.FileField(upload_to='Paciente', help_text='formato pdf',blank=True, null=True)
-    Labs2 = models.FileField(upload_to='Paciente', help_text='formato pdf', blank=True, null=True)
-    recetas = models.FileField(upload_to='Paciente', help_text='formato pdf',blank=True, null=True, verbose_name='Recetas')
+    Labs1 = models.FileField(upload_to='Paciente/', help_text='formato pdf',blank=True, null=True)
+    Labs2 = models.FileField(upload_to='Paciente/', help_text='formato pdf', blank=True, null=True)
+    recetas = models.FileField(upload_to='Paciente/', help_text='formato pdf',blank=True, null=True, verbose_name='Recetas')
 
     #Diagnóticos y Tx
 
@@ -120,11 +124,17 @@ class Paciente(models.Model):
     update = models.DateTimeField(auto_now=True, verbose_name='Fecha de Actualización')
     reevaluación = models.DateTimeField(blank=True, null=True, verbose_name='prox. reevaluación')
     
+    antecedentes = ['smoking', 'alcohol', 'drugs_adictions', 'allergies', 'dislipidemia', 'dm', 'hta,',
+      'inf_ang_de_pecho', 'evc', 'ivp', 'EPOC', 'cancer', ]
+
+    
+
+
 
     @property
     def tabaquismo(self):
         if self.smoking == 'POS':
-            POS = 'TABQUISMO'
+            POS = 'TABAQUISMO'
             return POS
 
         
